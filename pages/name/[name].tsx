@@ -51,7 +51,7 @@ const PokemonPageByName: NextPage<Props> = ({ pokemon }) => {
               <Card.Image
                 src={
                   pokemon.sprites.other?.dream_world.front_default ||
-                  'No-image.png'
+                  '../../public/img/no-image.png'
                 }
                 alt={pokemon.name}
                 width={'100%'}
@@ -84,25 +84,25 @@ const PokemonPageByName: NextPage<Props> = ({ pokemon }) => {
 
               <Container display='flex' gap={0} justify='space-evenly'>
                 <Image
-                  src={pokemon.sprites.front_default || 'No-image.png'}
+                  src={pokemon.sprites.front_default || '../../public/img/no-image.png'}
                   alt={pokemon.name}
                   width={100}
                   height={100}
                 />
                 <Image
-                  src={pokemon.sprites.back_default || 'No-image.png'}
+                  src={pokemon.sprites.back_default || '../../public/img/no-image.png'}
                   alt={pokemon.name}
                   width={100}
                   height={100}
                 />
                 <Image
-                  src={pokemon.sprites.front_shiny || 'No-image.png'}
+                  src={pokemon.sprites.front_shiny || '../../public/img/no-image.png'}
                   alt={pokemon.name}
                   width={100}
                   height={100}
                 />
                 <Image
-                  src={pokemon.sprites.back_shiny || 'No-image.png'}
+                  src={pokemon.sprites.back_shiny || '../../public/img/no-image.png'}
                   alt={pokemon.name}
                   width={100}
                   height={100}
@@ -124,17 +124,29 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
     paths: pokemon151Name.map((pokemonName) => ({
       params: { name: pokemonName }
     })),
-    fallback: false
+    fallback: 'blocking'
   }
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { name } = params as { name: string }
 
+  const pokemon = await getPokemonInfo(name.toLowerCase())
+
+  if (!pokemon) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    }
+  }
+
   return {
     props: {
-      pokemon: await getPokemonInfo(name)
-    }
+      pokemon
+    },
+    revalidate: 86400 // 24 hours
   }
 }
 
