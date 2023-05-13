@@ -1,7 +1,6 @@
 import Link from 'next/link'
 
 import { Spacer, Text, useTheme } from '@nextui-org/react'
-import NextLink from 'next/link'
 
 import Image from 'next/image'
 
